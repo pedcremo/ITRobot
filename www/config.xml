@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.packtpub.phonegaphotshot.localizationdemo"version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+  <name>ITRobot</name>
+  <description>
+    Inspecció tècnica de robots
+  </description>
+  <author email="pedcremo@iestacio.com" href="http://pere.bocairent.net">
+    Pere Crespo
+  </author>
+  <content src="index.html" />
+  <access origin="*" />
+  <preference name="fullscreen" value="false" />
+  <preference name="webviewbounce" value="false" />
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="HideKeyboardFormAccessoryBar" value="false"/>
+  <preference name="Orientation" value="default" />
+  <preference name="BackgroundColor" value="0xfff1eee5" />
+</widget>
