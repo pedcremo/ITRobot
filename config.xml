@@ -2,9 +2,9 @@
 <widget id="com.iestacio.itrobot" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>ITRobot</name>
     <description>
-        Hello World sample application that responds to the deviceready event.
+        Inspecció tècnica de robots (rogerbot)
     </description>
-    <author email="support@phonegap.com" href="http://phonegap.com">
+    <author email="pedcremo@iestacio.com" href="http://pere.bocairent.net">
         PhoneGap Team
     </author>
     <preference name="permissions" value="none" />
