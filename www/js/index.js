@@ -21,7 +21,7 @@
 
 /* jshint quotmark: false, unused: vars */
 /* global cordova, bluetoothSerial, listButton, connectButton, sendButton, disconnectButton */
-/* global chatform, deviceList, message, messages, statusMessage, chat, connection */
+/* global setupform, deviceList, message, messages, statusMessage, setup_div, connection */
 'use strict';
 
 var app = {
@@ -41,11 +41,12 @@ var app = {
         listButton.ontouchstart = app.list;
 
         sendButton.ontouchstart = app.sendData;
-        chatform.onsubmit = app.sendData;
+        setupform.onsubmit = app.sendData;
         disconnectButton.ontouchstart = app.disconnect;
 
         // listen for messages
-        bluetoothSerial.subscribe("\n", app.onmessage, app.generateFailureFunction("Subscripció fallida"));
+        //bluetoothSerial.subscribe("z", app.onmessage, app.generateFailureFunction("Subscripció fallida"));
+        bluetoothSerial.subscribeRawData(app.onmessage, app.generateFailureFunction("Subscripció fallida"));
 
         // get a list of peers
         setTimeout(app.list, 2000);
@@ -72,15 +73,24 @@ var app = {
     },
     sendData: function(event) {
         event.preventDefault();
+        // Typed Array
+        var data = new Uint8Array(4);
+        data[0] = 0x60;
+        data[1] = 0x60;
+        data[2] = 0x60;
+        data[3] = 0x122;
+        bluetoothSerial.write(data, success, failure);
 
-        var text = message.value + "\n";
+        //bluetoothSerial.write([parseInt(velocitat.value),parseInt(Kp.value),parseInt(Kd.value),'z'], success);
+        app.setStatus("Desat...");
+        /*var text = message.value + "\n";
         var success = function () {
             message.value = "";
             messages.value += ("Us: " + text);
             messages.scrollTop = messages.scrollHeight;
         };
 
-        bluetoothSerial.write(text, success);
+        bluetoothSerial.write(text, success);*/
         return false;
     },
     ondevicelist: function(devices) {
@@ -128,7 +138,7 @@ var app = {
     onconnect: function() {
         //connection.style.display = "none";
         $.mobile.changePage("#pagetwo");
-        chat.style.display = "block";
+        setup_div.style.display = "block";
         app.setStatus("Connectat");
     },
     ondisconnect: function(reason) {
@@ -136,14 +146,35 @@ var app = {
         if (reason) {
             details += ": " + JSON.stringify(reason);
         }
-        connection.style.display = "block";
+        $.mobile.changePage("#pageone");
+        //connection.style.display = "block";
         app.enable(connectButton);
-        chat.style.display = "none";
+        //chat.style.display = "none";
         app.setStatus("Desconnectat");
     },
     onmessage: function(message) {
-        messages.value += "Them: " + message;
-        messages.scrollTop = messages.scrollHeight;
+
+      /*bluetoothSerial.available(function(numBytes){
+                if (numBytes==8) {
+                  var bytes = new Uint8Array(message);
+                  messages.value = " Velocitat="+bytes[0]+" tel="+bytes[2]+" Kp="+bytes[4]+" Kd="+bytes[6];
+                  //bluetoothSerial.clear();
+                }
+                //else messages.value="MERDA"
+      }, app.generateFailureFunction("Available fallida"));
+*/
+      if(message.byteLength==8){
+        var bytes = new Uint8Array(message);
+        velocitat.value=bytes[0];Kp.value=bytes[4];Kd.value=bytes[6];
+        messages.value = "Velocitat="+bytes[0]+" tel="+bytes[2]+" Kp="+bytes[4]+" Kd="+bytes[6];
+      }
+        //console.log(bytes);
+      //}else{
+      //  messages.value=bytes.length;
+      //}
+        /*messages.value = message.length+" Velocitat="+message.charCodeAt(0).toString(2)+" tel="+message.charCodeAt(2)+" Kp="+message.charCodeAt(4)+" Kd="+message.charCodeAt(6);
+      */
+      messages.scrollTop = messages.scrollHeight;
     },
     setStatus: function(message) { // setStatus
         console.log(message);
