@@ -75,12 +75,18 @@ var app = {
         event.preventDefault();
         // Typed Array
         var data = new Uint8Array(4);
-        data[0] = 0x60;
-        data[1] = 0x60;
-        data[2] = 0x60;
-        data[3] = 0x122;
-        bluetoothSerial.write(data, success, failure);
+        data[0] = 0x30;
+        data[1] = 0x30;
+        data[2] = 0x30;
+        data[3] = 0x7A;
 
+        var success = function () {
+            message.value = "";
+            messages.value += ("Us: " + text);
+            messages.scrollTop = messages.scrollHeight;
+        };
+
+        bluetoothSerial.write(data, success, failure);
         //bluetoothSerial.write([parseInt(velocitat.value),parseInt(Kp.value),parseInt(Kd.value),'z'], success);
         app.setStatus("Desat...");
         /*var text = message.value + "\n";
@@ -165,7 +171,10 @@ var app = {
 */
       if(message.byteLength==8){
         var bytes = new Uint8Array(message);
-        velocitat.value=bytes[0];Kp.value=bytes[4];Kd.value=bytes[6];
+        //velocitat.value=bytes[0];Kp.value=bytes[4];Kd.value=bytes[6];
+        $("#velocitat").val(bytes[0]).slider("refresh");
+        $("#Kp").val(bytes[4]).slider("refresh");
+        $("#Kd").val(bytes[6]).slider("refresh");
         messages.value = "Velocitat="+bytes[0]+" tel="+bytes[2]+" Kp="+bytes[4]+" Kd="+bytes[6];
       }
         //console.log(bytes);

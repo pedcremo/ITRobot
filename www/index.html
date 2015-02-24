@@ -37,6 +37,10 @@
 
         <title>Inspecció tècnica Rogerbot</title>
         <style>
+            .ui-header, .ui-footer {
+                border-width: 0px 0;
+                border-style: none;
+              }
 
           </style>
         <script>
@@ -45,10 +49,14 @@
           });
         </script>
     </head>
-    <body>
+    <body style="background-color:#000;">
       <div data-role="page" id="pageone">
+        <div data-role="panel" id="myPanel">
+            <h2>Panel Header</h2>
+            <p>You can close the panel by clicking outside the panel, pressing the Esc key or by swiping.</p>
+        </div>
         <div data-role="header" style="background: #da4336;color:#fff">
-          <div style="float:left;"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></div>
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div>
             <h1>ITRobot</h1>
              <!-- <div data-role="navbar">
               <ul>
@@ -90,17 +98,17 @@
                   <textarea id="messages" readonly></textarea>
                   <!-- <input type="text" class="topcoat-text-input" id="message" placeholder="Message" /> -->
                   <label for="velocitat">Velocitat:</label>
-                  <input type="range" name="velocitat" id="velocitat"  min="0" max="255" data-show-value="true">
+                  <input type="range" name="velocitat" id="velocitat"  min="0" max="255" data-highlight="true" data-show-value="true">
                   <label for="Kp">Kp:</label>
-                  <input type="range" name="Kp" id="Kp"  min="0" max="255" data-show-value="true">
+                  <input type="range" name="Kp" id="Kp"  min="0" max="255" data-highlight="true" data-show-value="true">
                   <label for="Kd">Kd:</label>
-                  <input type="range" name="Kd" id="Kd"  min="0" max="255" data-show-value="true">
+                  <input type="range" name="Kd" id="Kd"  min="0" max="255" data-highlight="true" data-show-value="true">
                   <label for="switch">Telemetria:
         <input type="checkbox" data-role="flipswitch" name="telemetria" id="telemetria"></label>
                   <a class="ui-btn ui-shadow ui-icon-action ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="sendButton">Desar</a>
               </form>
               <div class="center">
-                 <a class="ui-btn ui-shadow ui-corner-all" style="background:#d9534f;color:#fff;" id="disconnectButton">Desconnectar</a> 
+                 <a class="ui-btn ui-shadow ui-corner-all" style="background:#d9534f;color:#fff;" id="disconnectButton">Desconnectar</a>
               </div>
           </div>
         </div>
