@@ -36,6 +36,7 @@ public class BluetoothSerial extends CordovaPlugin {
     private static final String SUBSCRIBE = "subscribe";
     private static final String UNSUBSCRIBE = "unsubscribe";
     private static final String SUBSCRIBE_RAW = "subscribeRaw";
+    private static final String SUBSCRIBE_RAW_ROGERNOT = "subscribeRawRogerbot";//NEW
     private static final String UNSUBSCRIBE_RAW = "unsubscribeRaw";
     private static final String IS_ENABLED = "isEnabled";
     private static final String IS_CONNECTED = "isConnected";
@@ -67,7 +68,6 @@ public class BluetoothSerial extends CordovaPlugin {
 
     StringBuffer buffer = new StringBuffer();
     private String delimiter;
-    private int numbytes=8;
 
     @Override
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
@@ -247,7 +247,7 @@ public class BluetoothSerial extends CordovaPlugin {
                         sendRawDataToSubscriber(bytes);
                     }
                     break;
-                 case MESSAGE_STATE_CHANGE:
+                 case MESSAGE_STATE_CHANGE
 
                     if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
@@ -298,7 +298,7 @@ public class BluetoothSerial extends CordovaPlugin {
     }
 
     private void sendRawDataToSubscriber(byte[] data) {
-        if (data != null && data.length >= 0) {
+        if (data != null && data.length > 0) {
             PluginResult result = new PluginResult(PluginResult.Status.OK, data);
             result.setKeepCallback(true);
             rawDataAvailableCallback.sendPluginResult(result);

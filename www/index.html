@@ -29,46 +29,72 @@
         <link rel="stylesheet" type="text/css" href="css/index.css" />
 
         <!-- Include jQuery Mobile stylesheets -->
-        <link rel="stylesheet" href="js/libs/jquery.mobile-1.4.5.min.css">
+        <link rel="stylesheet" href="js/libs/jquery.mobile-1.4.5.min.css" />
         <!-- Include the jQuery library -->
         <script src="js/libs/jquery-2.1.3.min.js"></script>
         <!-- Include the jQuery Mobile library -->
-        <script src="js/libs/jquery.mobile-1.4.5.min.js"></script>
 
+        <script src="http://jsconsole.com/remote.js?8D7D8EB1-F17E-4317-860B-DD9FB7D75FE7"></script>
         <title>Inspecció tècnica Rogerbot</title>
         <style>
             .ui-header, .ui-footer {
-                border-width: 0px 0;
-                border-style: none;
-              }
-
-          </style>
+              border-width: 0px 0;
+              border-style: none;
+            }
+            .panel{
+              color:#acacac;
+              background:rgba(255,255,255,.95);text-align:center;
+            }
+            .panel h1{
+              color:#fff;
+              text-shadow: 0 0 0.8em #0d73c4, 0 0 0.2em #0d73c4,0 0 0.2em #0d73c4;
+              border-width:0px;
+              border-style: solid;
+            }
+            .listMenu a{
+              color:#acacac;
+            }
+            .listMenu{
+              background-color:#f6f6f6;
+            }
+        </style>
         <script>
           $(document).ready(function(){
             $("*").css("text-shadow","none");
+
+            var panel='<div data-role="panel" data-display="overlay" class="panel" id="myPanel"><h1>Robotics</h1><h5>IES L\'ESTACIÓ LABS</<h5> \
+            <ul class="listMenu" data-role="listview" data-inset="true" class="tablist-left"> \
+            <li><a href="#pageInit" class="ui-btn ui-icon-home ui-btn-icon-left " data-ajax="false">Inici</a></li> \
+            <li><a href="#pageSetup" class="ui-btn ui-shadow ui-icon-gear ui-btn-icon-left" data-ajax="false">Setup Rogerbot</a></li> \
+            <li><a href="#pageSensors" class="ui-btn ui-shadow ui-icon-eye ui-btn-icon-left" data-ajax="false">Test Sensors</a></li> \
+            <li><a href="#pageMotors" class="ui-btn ui-shadow ui-icon-recycle ui-btn-icon-left " data-ajax="false">Test Motors</a></li> \
+            <li><a href="#pageAlignment" class="ui-btn ui-shadow ui-icon-arrow-u-r ui-btn-icon-left" data-ajax="false">Test Alignment</a></li> \
+            <li><a href="#pageAbout" class="ui-btn ui-shadow ui-icon-info ui-btn-icon-left" data-ajax="false">About</a></li> \
+            </ul> \
+            <br><br><img src="img/logo_ies_small.png" /> ';
+
+            $(document).one('pagebeforecreate', function () {
+                  $.mobile.pageContainer.prepend(panel);
+                  //$("#menu").listview().enhanceWithin();
+                  $("#myPanel").panel().enhanceWithin();
+            });
           });
         </script>
+        <script src="js/libs/jquery.mobile-1.4.5.min.js"></script>
     </head>
     <body style="background-color:#000;">
-      <div data-role="page" id="pageone">
-        <div data-role="panel" id="myPanel">
-            <h2>Panel Header</h2>
-            <p>You can close the panel by clicking outside the panel, pressing the Esc key or by swiping.</p>
-        </div>
-        <div data-role="header" style="background: #da4336;color:#fff">
-          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div>
-            <h1>ITRobot</h1>
-             <!-- <div data-role="navbar">
-              <ul>
-                <li><a href="#pagetwo">Page Two</a></li>
 
-              </ul>
-            </div> -->
+      <div data-role="page" id="pageInit">
+
+
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>ITRobot</h1>
         </div>
+
         <div data-role="main" class="ui-content">
           <div id="connection">
-              <div style="margin: 20px">
-                  Dispositiu BT: <br/>
+              <div style="margin: 20p0x">
+                  Dispositiu <img src="img/bt.png"/>:<br/>
                   <select id="deviceList">
                       <option>Descobrint...</option>
                   </select>
@@ -81,19 +107,29 @@
               </p>
           </div>
 
+
         </div>
         <footer>
             <div id="statusMessage"></div>
         </footer>
+        <img src="img/robot_rebird_pcb2.svg" alt="Rogerbot" style="display: block;width: 70%; height: auto; margin-left: auto;
+    margin-right: auto;">
       </div> <!-- END page one -->
 
-      <div data-role="page" id="pagetwo">
+      <div data-role="page" id="pageSetup">
+
         <div data-role="header" style="background: #da4336;color:#fff">
-          <div style="float:left;"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></div>
-            <h1>ITRobot</h1>
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Setup Rogerbot</h1>
+
         </div>
+
         <div data-role="main" class="ui-content">
           <div id="setup_div">
+            <div class="ui-grid-a">
+               <div class="ui-block-a"><a class="ui-btn  ui-shadow ui-icon-delete ui-btn-icon-left ui-corner-all" style="background:#d9534f;color:#fff;" id="stopButton">Stop</a></div>
+               <div class="ui-block-b"><a class="ui-btn ui-shadow ui-icon-arrow-r ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="startButton">Start</a></div>
+
+            </div>
               <form id="setupform">
                   <textarea id="messages" readonly></textarea>
                   <!-- <input type="text" class="topcoat-text-input" id="message" placeholder="Message" /> -->
@@ -104,16 +140,58 @@
                   <label for="Kd">Kd:</label>
                   <input type="range" name="Kd" id="Kd"  min="0" max="255" data-highlight="true" data-show-value="true">
                   <label for="switch">Telemetria:
-        <input type="checkbox" data-role="flipswitch" name="telemetria" id="telemetria"></label>
+                    <input type="checkbox" data-role="flipswitch" name="telemetria" id="telemetria"></label>
                   <a class="ui-btn ui-shadow ui-icon-action ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="sendButton">Desar</a>
               </form>
               <div class="center">
-                 <a class="ui-btn ui-shadow ui-corner-all" style="background:#d9534f;color:#fff;" id="disconnectButton">Desconnectar</a>
+                 <a class="ui-btn ui-shadow ui-corner-all" style="display:none;background:#d9534f;color:#fff;" id="disconnectButton">Desconnectar</a>
               </div>
           </div>
         </div>
-      </div> <!-- END page two1 -->
+      </div> <!-- END pageSetup -->
 
+      <div data-role="page" id="pageSensors">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Sensors</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2 id="sensorBanner">Treballant ... </h2>
+        </div>
+        <img src="img/robot-rebird-2-0-sensor.svg" alt="Rogerbot" style="display: block;width: 80%; height: auto; margin-left: auto;
+    margin-right: auto;">
+      </div> <!-- END pageSensors -->
+      <div data-role="page" id="pageMotors">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Motors</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2>Treballant ... </h2>
+        </div>
+
+      </div> <!-- END pageMotors -->
+      <div data-role="page" id="pageAlignment">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Aliniació</h1>
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2>Treballant ... </h2>
+        </div>
+      </div> <!-- END pageAlignment -->
+      <div data-role="page" id="pageAbout">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Crèdits</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2>Treballant ... </h2>
+        </div>
+      </div> <!-- END pageAbout -->
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
