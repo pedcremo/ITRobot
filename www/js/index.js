@@ -83,7 +83,7 @@ var app = {
             //while (bt_rx_message.length==0){
             bluetoothSerial.readUntil('z', function (data) { //Funció traicionera retorna un string buit si no troba delimitador
 
-              if (data.length==0 && cont_<20) app.pageSetup(); //Si el string retornat es buit tornem a demanar
+              if (data.length<=9 && cont_<50) app.pageSetup(); //Si el string retornat es buit tornem a demanar
               else cont_=0;
               //bt_rx_message=data;
               console.log("Read Rogerbot setup:"+data);
@@ -115,6 +115,9 @@ var app = {
     pageSensors:function(event) { //Triggered when pageSensors is showed
       //bluetoothSerial.subscribeRawData(app.onTest, app.generateFailureFunction("Subscripció fallida"));
       myInterval=setInterval(app.readSensor, 100);
+
+
+
     },
 
     readSensor:function(){
@@ -131,6 +134,59 @@ var app = {
           else {
 
             $("#sensorBanner").html(parseInt(data.substr(0,data.length-1)));
+          var valor  = parseInt(data.substr(0,data.length-1));
+          console.log( "enteoriaa asi anira algo'"+ valor);
+          $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor"+valor+".svg");
+            /*switch (valor) {
+                  case "9":
+                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor9.svg");
+                    //console.log($("#img_sensor").attr());
+
+                    break;
+                  case "8":
+                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor8.svg");
+
+                    //console.log($("#img_sensor").attr());
+                    break;
+                  case "5":
+                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor5.svg");
+                    //console.log($("#img_sensor").attr());
+                    break;
+                  case "3":
+                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor3.svg");
+                    //console.log($("#img_sensor").attr());
+                    break;
+                  case "1":
+                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor1.svg");
+                    //console.log($("#img_sensor").attr());
+                    break;
+                    case "-1":
+                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-1.svg");
+                      //console.log($("#img_sensor").attr());
+                      break;
+                    case "-3":
+                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-3.svg");
+                      //console.log($("#img_sensor").attr());
+                      break;
+                    case "-5":
+                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-5.svg");
+                      //console.log($("#img_sensor").attr());
+                      break;
+                    case "-8":
+                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-8.svg");
+                      //console.log($("#img_sensor").attr());
+                      break;
+                    case "-9":
+                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-9.svg");
+                      //console.log($("#img_sensor").attr());
+                      break;
+                      default:
+                        $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor.svg");
+                        ///console.log($("#img_sensor").attr());
+                }*/
+
+
+
           }
           console.log("Read Rogerbot test sensor:"+data+" "+data.length);
         },failure);
