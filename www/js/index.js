@@ -133,7 +133,7 @@ var app = {
           if (data.length==0) console.log("MERRRRDA");
           else {
 
-            $("#sensorBanner").html(parseInt(data.substr(0,data.length-1)));
+            $("#sensor_display").html(parseInt(data.substr(0,data.length-1)));
           var valor  = parseInt(data.substr(0,data.length-1));
           console.log( "enteoriaa asi anira algo'"+ valor);
           $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor"+valor+".svg");

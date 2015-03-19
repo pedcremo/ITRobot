@@ -1,3 +1,14 @@
+.image{
+      position:relative;
+      width:100%;
+}
+#sensor_display{
+    position:absolute;
+    top:45%;
+    left:47%;
+    width:100%;
+    color:#fff;
+}
 .fadein {
   opacity: 1;
   -webkit-transition: opacity 1s ease-in;
