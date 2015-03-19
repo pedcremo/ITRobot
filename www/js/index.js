@@ -137,6 +137,9 @@ var app = {
           var valor  = parseInt(data.substr(0,data.length-1));
           console.log( "enteoriaa asi anira algo'"+ valor);
           $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor"+valor+".svg");
+          if (valor==-9) $("#sensorBanner").html("El robot se n'ha eixit per la dreta. La línia negra queda a l'esquerra");
+          else if (valor==9) $("#sensorBanner").html("El robot se n'ha eixit per l'esquerra. La línia negra queda a la dreta");
+          else $("#sensorBanner").html("Ves posicionant manualment cadascun dels sensors del robot sobre la línia negra...");
             /*switch (valor) {
                   case "9":
                     $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor9.svg");
