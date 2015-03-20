@@ -55,52 +55,41 @@ var app = {
         $('#pageSetup').on( "pageshow", app.pageSetup);
         $('#pageSensors').on( "pageshow", app.pageSensors);
         $('.listMenu li').on('click', function() {
-            //alert("Works"); // id of clicked li by directly accessing DOMElement property
+            //Everytime whe change to any main menu option we clear the current schedulling
+            //stored at myInterval variable. Remember that everytime we test something
+            //from our robot we send via BT a command in order to receive target data from the robot (sensors, encoders, compass, setup...)
+
             clearInterval(myInterval);
         });
         // get a list of peers
         setTimeout(app.list, 2000);
     },
-    pageSetup: function(event) { //Triggered when pageSetup is showed
+    //Triggered when pageSetup is showed
+    pageSetup: function(event) {
 
-        /*bluetoothSerial.isConnected(
-            function() {
-                console.log("Bluetooth is connected");
-            },
-            function() {
-                app.ondisconnect();
-            }
-        );*/
         messages.value="Showing setup parameters. Wait ...";
         cont_+=1;
-        //event.preventDefault();
+
         var data_ = new Uint8Array([0x6C,0x2E]); //Send sequence 'l.' to ask for Rogerbot settings
         var success = function () {
-            //bluetoothSerial.clear(function(){},failure);
+
             messages.value = "Rogerbot donam configuració ....";
             messages.scrollTop = messages.scrollHeight;
 
-            //while (bt_rx_message.length==0){
             bluetoothSerial.readUntil('z', function (data) { //Funció traicionera retorna un string buit si no troba delimitador
 
               if (data.length<=9 && cont_<50) app.pageSetup(); //Si el string retornat es buit tornem a demanar
               else cont_=0;
-              //bt_rx_message=data;
               console.log("Read Rogerbot setup:"+data);
               var databak=data.substr(0,(data.length-1));
               if (data[0]=='o'){databak=data.substr(1,(data.length-1)); }   //BUG
 
               var res= databak.split(",");
 
-              //if  (isNaN(parseInt(res[0])) || isNaN(parseInt(res[1])) || isNaN(parseInt(res[2])) || isNaN(parseInt(res[3]))) app.pageSetup();
-
               messages.value = " Velocitat="+parseInt(res[0])+" tel="+parseInt(res[1])+" Kp="+parseInt(res[2])+" Kd="+parseInt(res[3]);
-              //if (!setup_showed){
-                $("#velocitat").val(parseInt(res[0])).slider("refresh");
-                $("#Kp").val(parseInt(res[2])).slider("refresh");
-                $("#Kd").val(parseInt(res[3])).slider("refresh");
-                //setup_showed=true;
-              //}
+              $("#velocitat").val(parseInt(res[0])).slider("refresh");
+              $("#Kp").val(parseInt(res[2])).slider("refresh");
+              $("#Kd").val(parseInt(res[3])).slider("refresh");
 
             }, failure);
 
@@ -112,14 +101,14 @@ var app = {
         bluetoothSerial.write(data_, success, failure);
     },
 
-    pageSensors:function(event) { //Triggered when pageSensors is showed
-      //bluetoothSerial.subscribeRawData(app.onTest, app.generateFailureFunction("Subscripció fallida"));
-      myInterval=setInterval(app.readSensor, 100);
+    //Triggered when pageSensors is showed. Schedules a regular call to readSensor. This schedulling
+    //is cancelled when we click other main menu option from the app
+    pageSensors:function(event) {
 
-
-
+      myInterval=setInterval(app.readSensor, 50); //Every 50 ms we do a robot bar sensor reading
     },
-
+    //With this method we send the sequence 't.' to Rogerbot because we want to receive a bar sensor reading from him
+    //the answer will be with the format number(positive or negative) in the range -9 to 9 followed with ending char 'z'
     readSensor:function(){
       var data_ = new Uint8Array([0x74,0x2E]); //Send sequence 't.' to ask for a Rogerbot bar reading sensor
       var failure = function () {
@@ -130,66 +119,18 @@ var app = {
 
         bluetoothSerial.readUntil('z', function (data) {
 
-          if (data.length==0) console.log("MERRRRDA");
+          if (data.length==0) console.log("Cap dada rebuda al fer readSensor");
           else {
-
             $("#sensor_display").html(parseInt(data.substr(0,data.length-1)));
-          var valor  = parseInt(data.substr(0,data.length-1));
-          console.log( "enteoriaa asi anira algo'"+ valor);
-          $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor"+valor+".svg");
-          if (valor==-9) $("#sensorBanner").html("El robot se n'ha eixit per la dreta. La línia negra queda a l'esquerra");
-          else if (valor==9) $("#sensorBanner").html("El robot se n'ha eixit per l'esquerra. La línia negra queda a la dreta");
-          else $("#sensorBanner").html("Ves posicionant manualment cadascun dels sensors del robot sobre la línia negra...");
-            /*switch (valor) {
-                  case "9":
-                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor9.svg");
-                    //console.log($("#img_sensor").attr());
+            var valor  = parseInt(data.substr(0,data.length-1));
 
-                    break;
-                  case "8":
-                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor8.svg");
+            if (valor>=-9 && valor<=9){
+              $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor"+valor+".svg");
+            }
 
-                    //console.log($("#img_sensor").attr());
-                    break;
-                  case "5":
-                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor5.svg");
-                    //console.log($("#img_sensor").attr());
-                    break;
-                  case "3":
-                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor3.svg");
-                    //console.log($("#img_sensor").attr());
-                    break;
-                  case "1":
-                    $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor1.svg");
-                    //console.log($("#img_sensor").attr());
-                    break;
-                    case "-1":
-                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-1.svg");
-                      //console.log($("#img_sensor").attr());
-                      break;
-                    case "-3":
-                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-3.svg");
-                      //console.log($("#img_sensor").attr());
-                      break;
-                    case "-5":
-                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-5.svg");
-                      //console.log($("#img_sensor").attr());
-                      break;
-                    case "-8":
-                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-8.svg");
-                      //console.log($("#img_sensor").attr());
-                      break;
-                    case "-9":
-                      $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor-9.svg");
-                      //console.log($("#img_sensor").attr());
-                      break;
-                      default:
-                        $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor.svg");
-                        ///console.log($("#img_sensor").attr());
-                }*/
-
-
-
+            if (valor==-9) $("#sensorBanner").html("El robot se n'ha eixit per la dreta. La línia negra queda a l'esquerra");
+            else if (valor==9) $("#sensorBanner").html("El robot se n'ha eixit per l'esquerra. La línia negra queda a la dreta");
+            else $("#sensorBanner").html("Ves posicionant manualment cadascun dels sensors del robot sobre la línia negra...");
           }
           console.log("Read Rogerbot test sensor:"+data+" "+data.length);
         },failure);
@@ -246,9 +187,9 @@ var app = {
         bluetoothSerial.write(data, success, failure);
 
     },
+    //We send command 's'+speed+Kp+Kd+'.' to robot in order to save this new conf in the robot eeprom
+    //TODO:Send telemetry enabler too
     sendDataSetup: function(event) {
-        event.preventDefault();
-        // Typed Array
 
         var data = new Uint8Array([0x73,$("#velocitat").val(),$("#Kp").val(),$("#Kd").val(),0x2E]);// 's' char start and '.' char ending delimiter
 
@@ -259,22 +200,13 @@ var app = {
 
         };
         var failure = function () {
-            messages.value = "MEGDE";
+            messages.value = "Error en sendDataSetup. No s'ha pogut enviar conf de rogerbot";
             messages.scrollTop = messages.scrollHeight;
         };
 
         bluetoothSerial.write(data, success, failure);
-        //bluetoothSerial.write([parseInt(velocitat.value),parseInt(Kp.value),parseInt(Kd.value),'z'], success);
         app.setStatus("Desat...");
-        /*var text = message.value + "\n";
-        var success = function () {
-            message.value = "";
-            messages.value += ("Us: " + text);
-            messages.scrollTop = messages.scrollHeight;
-        };
 
-        bluetoothSerial.write(text, success);*/
-        return false;
     },
     ondevicelist: function(devices) {
         var option;
@@ -335,25 +267,17 @@ var app = {
         //chat.style.display = "none";
         app.setStatus("Desconnectat");
     },
-    onmessage: function(message) {
 
-      /*bluetoothSerial.available(function(numBytes){
-                if (numBytes==8) {
-                  var bytes = new Uint8Array(message);
-                  messages.value = " Velocitat="+bytes[0]+" tel="+bytes[2]+" Kp="+bytes[4]+" Kd="+bytes[6];
-                  //bluetoothSerial.clear();
-                }
-                //else messages.value="MERDA"
-      }, app.generateFailureFunction("Available fallida"));
-*/    var bytes = new Uint8Array(message);
-      //messages.value="";
+    //TODO:Not used at the moment pending final removal
+    onmessage: function(message) {
+      /*
+      var bytes = new Uint8Array(message);
       for (i=0;i<bytes.length;i++){
         messages.value+=bytes[i]+" ";
       }
 
       if(message.byteLength==8){
         var bytes = new Uint8Array(message);
-        //velocitat.value=bytes[0];Kp.value=bytes[4];Kd.value=bytes[6];
         if (!setup_showed){
           $("#velocitat").val(bytes[0]).slider("refresh");
           $("#Kp").val(bytes[4]).slider("refresh");
@@ -362,13 +286,7 @@ var app = {
         }
         messages.value = "Velocitat="+bytes[0]+" tel="+bytes[2]+" Kp="+bytes[4]+" Kd="+bytes[6];
       }
-        //console.log(bytes);
-      //}else{
-      //  messages.value=bytes.length;
-      //}
-        /*messages.value = message.length+" Velocitat="+message.charCodeAt(0).toString(2)+" tel="+message.charCodeAt(2)+" Kp="+message.charCodeAt(4)+" Kd="+message.charCodeAt(6);
-      */
-      messages.scrollTop = messages.scrollHeight;
+      messages.scrollTop = messages.scrollHeight;*/
     },
     setStatus: function(message) { // setStatus
         console.log(message);
