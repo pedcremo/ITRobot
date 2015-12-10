@@ -38,9 +38,10 @@ textarea {
     margin: 20px;
 }
 
-#sendButton {
+
+/*#sendButton {
     margin-top: 4px;
-}
+}*/
 
 #message {
     max-width: 185px;

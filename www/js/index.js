@@ -48,12 +48,16 @@ var app = {
         setupform.onsubmit = app.sendData;
         disconnectButton.ontouchstart = app.disconnect;
 
+        $('#estrategy-select').on('change', function() {
+          console.log("Change select ->"+$('#estrategy-select').val()+" "+this.selectedIndex);
+        });
         // listen for messages
         //bluetoothSerial.subscribe("z", app.onmessage, app.generateFailureFunction("Subscripció fallida"));
         //bluetoothSerial.subscribeRawData(app.onmessage, app.generateFailureFunction("Subscripció fallida"));
 
         $('#pageSetup').on( "pageshow", app.pageSetup);
         $('#pageSensors').on( "pageshow", app.pageSensors);
+        $('#pageSharp').on( "pageshow", app.pageSharp);
         $('.listMenu li').on('click', function() {
             //Everytime whe change to any main menu option we clear the current schedulling
             //stored at myInterval variable. Remember that everytime we test something
@@ -80,17 +84,25 @@ var app = {
 
               if (data.length<=9 && cont_<50) app.pageSetup(); //Si el string retornat es buit tornem a demanar
               else cont_=0;
-              console.log("Read Rogerbot setup:"+data);
-              var databak=data.substr(0,(data.length-1));
-              if (data[0]=='o'){databak=data.substr(1,(data.length-1)); }   //BUG
+              console.log("Read Rogerbot setup:"+data+" length="+data.length+"last char="+data[data.length-1])  ;
+              var databak=data.substring(data.lastIndexOf("o")+1,(data.length-1));//La informació esta delimitada entre els caracters "o" i "z"
+              //if (data[0]=='o'){databak=data.substr(data.indexOf("o")+1,(data.length-1)); }   //BUG
 
               var res= databak.split(",");
 
-              messages.value = " Velocitat="+parseInt(res[0])+" tel="+parseInt(res[1])+" Kp="+parseInt(res[2])+" Kd="+parseInt(res[3]);
+              messages.value = " Velocitat="+parseInt(res[0])+" tel="+parseInt(res[1])+" Kp="+parseInt(res[2])+" Kd="+parseInt(res[3])+ " Estrategia="+res[4]+" curveC="+parseInt(res[5])+"%";
               $("#velocitat").val(parseInt(res[0])).slider("refresh");
+              if (parseInt(res[1])==0){
+                $("#telemetria").attr('checked',false).flipswitch("refresh");
+              }else{
+                $("#telemetria").attr('checked',true).flipswitch("refresh");
+              }
+              $('#estrategy-select').val(res[4]);
+              //$("#estrategy-select").selectedIndex=res[4];
+              $("#estrategy-select").selectmenu("refresh");
               $("#Kp").val(parseInt(res[2])).slider("refresh");
               $("#Kd").val(parseInt(res[3])).slider("refresh");
-
+              $("#CorrectorCurva").val(parseInt(res[5])).slider("refresh");
             }, failure);
 
         };
@@ -137,7 +149,38 @@ var app = {
       };
       bluetoothSerial.write(data_, success, app.generateFailureFunction("Send test asking"));
     },
+    pageSharp:function(){
+      myInterval=setInterval(app.readSharp, 50); //Every 50 ms we do a robot bar sensor reading
+    },
+    //With this method we send the sequence 'i.' to Rogerbot because we want to receive a Sharp infrared sensor reading from him
+    //the answer will be 2 bytes with the analog reading followed with ending char 'z'
+    readSharp:function(){
+      var data_ = new Uint8Array([0x69,0x2E]); //Send sequence 'i.' to ask for a Rogerbot sharp infrared reading
+      var failure = function () {
+          messages.value = "ERROR: Comunicació fallida";
+          messages.scrollTop = messages.scrollHeight;
+      };
+      var success = function () {
+          bluetoothSerial.readUntil('z', function (data) {
 
+          if (data.length==0) console.log("Cap dada rebuda al fer readSharp");
+          else {
+
+            var valor  = parseInt(data.substr(1,data.length-1));
+            if (valor<3){
+              valor=-1;
+            }else{
+              //valor=(6787.0 /(valor - 3.0)) - 4.0;
+              valor=valor;
+            }
+            $("#banner_sharp").html(valor);
+
+          }
+          console.log("Read Rogerbot sharp sensor:"+data+" "+data.length);
+        },failure);
+      };
+      bluetoothSerial.write(data_, success, app.generateFailureFunction("Send sharp asking"));
+    },
     list: function(event) {
         deviceList.firstChild.innerHTML = "Descobrint...";
         app.setStatus("Cercant dispositius Bluetooth ...");
@@ -160,41 +203,46 @@ var app = {
     },
 
     sendDataStart: function(event) {
+	     sw_show();
+	     sw_reset();
+	     sw_start();
         event.preventDefault();
         var data = new Uint8Array([0x61,0x2E]); //Send sequence 'a.' to start Rogerbot race
         var success = function () {
-            messages.value = "Rogerbot al ataque....";
+            //messages.value = "Rogerbot al ataque....";
             messages.scrollTop = messages.scrollHeight;
+            setTimeout(app.pageSetup, 5000);
         };
         var failure = function () {
-            messages.value = "MEGDE";
+            messages.value = "Error: start rogerbot";
             messages.scrollTop = messages.scrollHeight;
         };
         bluetoothSerial.write(data, success, failure);
 
     },
     sendDataStop: function(event) {
+	     sw_stop();
         event.preventDefault();
         var data = new Uint8Array([0x7A,0x2E]); //Send sequence 'z.' to start Rogerbot race
         var success = function () {
-            messages.value = "Rogerbot PARA";
+            //messages.value = "Rogerbot PARA";
             messages.scrollTop = messages.scrollHeight;
         };
         var failure = function () {
-            messages.value = "MEGDE";
+            messages.value = "Error: stop rogerbot";
             messages.scrollTop = messages.scrollHeight;
         };
         bluetoothSerial.write(data, success, failure);
 
     },
-    //We send command 's'+speed+Kp+Kd+'.' to robot in order to save this new conf in the robot eeprom
+    //We send command 's'+speed+Kp+Kd+strategy+curveCorrection'.' to robot in order to save this new conf in the robot eeprom
     //TODO:Send telemetry enabler too
     sendDataSetup: function(event) {
 
-        var data = new Uint8Array([0x73,$("#velocitat").val(),$("#Kp").val(),$("#Kd").val(),0x2E]);// 's' char start and '.' char ending delimiter
+        var data = new Uint8Array([0x73,$("#velocitat").val(),$("#telemetria").is(':checked') ? 1 : 0,$("#Kp").val(),$("#Kd").val(),$('#estrategy-select').val().charCodeAt(0),$("#CorrectorCurva").val(),0x2E]);// 's' char start and '.' char ending delimiter
 
         var success = function () {
-            messages.value = "Enviat per BT "+data[1]+" "+data[2]+" "+data[3]+" "+data[4];
+            console.log("Enviat per BT "+data[1]+" "+data[2]+" "+data[3]+" "+data[4]+" "+data[5]+" "+data[6]);
             messages.scrollTop = messages.scrollHeight;
             bluetoothSerial.clear(function(){app.pageSetup();},failure);
 
