@@ -136,12 +136,13 @@ var app = {
             $("#sensor_display").html(parseInt(data.substr(0,data.length-1)));
             var valor  = parseInt(data.substr(0,data.length-1));
 
-            if (valor>=-9 && valor<=9){
+            if (valor>=0 && valor<=56){
+              valor=""; 
               $("#img_sensor").attr("src","img/robot-rebird-2-0-sensor"+valor+".svg");
             }
 
-            if (valor==-9) $("#sensorBanner").html("El robot se n'ha eixit per la dreta. La línia negra queda a l'esquerra");
-            else if (valor==9) $("#sensorBanner").html("El robot se n'ha eixit per l'esquerra. La línia negra queda a la dreta");
+            if (valor==0) $("#sensorBanner").html("El robot se n'ha eixit per la dreta. La línia negra queda a l'esquerra");
+            else if (valor==56) $("#sensorBanner").html("El robot se n'ha eixit per l'esquerra. La línia negra queda a la dreta");
             else $("#sensorBanner").html("Ves posicionant manualment cadascun dels sensors del robot sobre la línia negra...");
           }
           console.log("Read Rogerbot test sensor:"+data+" "+data.length);
