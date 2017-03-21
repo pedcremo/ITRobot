@@ -90,10 +90,11 @@ https://developer.android.com/studio/index.html
 
 10. Write this code at the bottom of ~/bashrc:
 
+    ```bash
     $ sudo nano ~/.bashrc
     export ANDROID_HOME=$HOME/Android/Sdk
     export PATH=$PATH:$ANDROID_HOME/tools
-
+    ``` 
 11. Remove the tools folder from ~/Android/Sdk and add the tools folder from this link:
 
 https://dl.google.com/android/repository/tools_r22.6.2-linux.zip
