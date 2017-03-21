@@ -1,5 +1,5 @@
 # ITRobot
-Inspecció tècnica de Robots. Pensat per al Rogerbot de l'IES l'Estació d'Ontinyent
+Inspecció tècnica de Robots. Pensat per al Rogerbot de l'IES l'Estació d'Ontinyent MORE INFO: http://pere.bocairent.net/wiki/index.php/ROGERBOT
 
 PROBLEMS: If we download latest android studio with tools version 25.2.3 or upper android command disapears and
 consequently cordova projects doesn't work. Read step by step instructions at the end of README to fix it
