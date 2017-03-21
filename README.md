@@ -45,7 +45,7 @@ NOTE: Don't edit the HTML or JS in the generated projects. Edit the source in ~/
 
 TIP: chrome://inspect/ per debugging via usb (enable usb debugging in android settings)
 
-#Installation of Cordova For Linux (ubuntu ) step by step
+# Installation of Cordova For Linux (ubuntu ) step by step
 
 1. Clone the github repository (install git if you don’t have it already):
     ```bash
