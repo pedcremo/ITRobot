@@ -48,47 +48,56 @@ TIP: chrome://inspect/ per debugging via usb (enable usb debugging in android se
 Installation of Cordova For Linux (ubuntu ) step by step
 
 1. Clone the github repository (install git if you don’t have it already):
-$git clone https://github.com/pedcremo/ITRobot.git
+
+    $ git clone https://github.com/pedcremo/ITRobot.git
 
 2. Install the JDK 8 of Java by PPA:
-$sudo add-apt-repository ppa:webupd8team/java
-$sudo apt-get update
-$sudo apt-get install oracle-java8-installer
+
+    $ sudo add-apt-repository ppa:webupd8team/java
+    $ sudo apt-get update
+    $ sudo apt-get install oracle-java8-installer
 
 3. Install node.js (install curl if you don’t have it already):
 
-$curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-$sudo apt-get install -y nodejs
+    $ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+    $ sudo apt-get install -y nodejs
 
 4. Clone Cordova-cli from Github:
 
-$git clone https://github.com/apache/cordova-cli.git
+    $ git clone https://github.com/apache/cordova-cli.git
 
 5. Install npm:
-$sudo apt-get install npm
+    
+    $ sudo apt-get install npm
 
 6. Install Cordova:
-$sudo npm install cordova -g
+    
+    $ sudo npm install cordova -g
 
 7. Add Android and the Bluetooth libraries to ITRobot:
-$cordova platform add android
-$cordova plugin add com.megster.cordova.bluetoothserial
-$cordova plugin add cordova-plugin-bluetooth-serial
+    
+    $ cordova platform add android
+    $ cordova plugin add com.megster.cordova.bluetoothserial
+    $ cordova plugin add cordova-plugin-bluetooth-serial
 
 8. Install Android Studio:
 https://developer.android.com/studio/index.html
 
 9. Execute it and install a latest version than 25.x.x of the Android SDK:
-$cd ~/Downloads/android-studio/bin
-$./studio.sh
+    
+    $ cd ~/Downloads/android-studio/bin
+    $ ./studio.sh
 
 10. Write this code at the bottom of ~/bashrc:
-$sudo nano ~/.bashrc
-export ANDROID_HOME=$HOME/Android/Sdk
-export PATH=$PATH:$ANDROID_HOME/tools
+
+    $ sudo nano ~/.bashrc
+    export ANDROID_HOME=$HOME/Android/Sdk
+    export PATH=$PATH:$ANDROID_HOME/tools
 
 11. Remove the tools folder from ~/Android/Sdk and add the tools folder from this link:
+
 https://dl.google.com/android/repository/tools_r22.6.2-linux.zip
 
 12. Finally you can connect your android device (activate debugging in settings/development tools) to your computer, enter to your ITRobot folder and write the following command to compile your program:
-$cordova run android
+
+    $ cordova run android
