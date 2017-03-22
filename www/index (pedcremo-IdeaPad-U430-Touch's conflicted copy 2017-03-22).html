@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<!--
+    Authored by Pere Crespo
+
+    Based on Chat Example for Bluetooth Serial PhoneGap Plugin
+    http://github.com/don/BluetoothSerial
+
+    Copyright 2013 Don Coleman
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at<div class="ui-block-b"><a class="ui-btn ui-shadow ui-icon-arrow-r ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="startButton">Start</a></div>
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name = "format-detection" content = "telephone=no"/>
+        <!-- Include meta tag to ensure proper rendering and touch zooming -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+        <!-- <link rel="stylesheet" type="text/css" href="css/topcoat-mobile-light.css" /> -->
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+        <!-- Include jQuery Mobile stylesheets -->
+        <link rel="stylesheet" href="js/libs/jquery.mobile-1.4.5.min.css" />
+        <!-- Include the jQuery library -->
+        <script src="js/libs/jquery-2.1.3.min.js"></script>
+        <!-- Include the jQuery Mobile library -->
+
+    
+        <!-- <script src="https://jsconsole.com/js/remote.js?613c1acd-fd6c-44e2-90f0-8641e4b49dae"></script> -->
+     
+        <title>Inspecció tècnica Rogerbot</title>
+        <style>
+            .ui-header, .ui-footer {
+              border-width: 0px 0;
+              border-style: none;
+            }
+            .panel{
+              color:#acacac;
+              background:rgba(255,255,255,.95);text-align:center;
+            }
+            .panel h1{
+              color:#fff;
+              text-shadow: 0 0 0.8em #0d73c4, 0 0 0.2em #0d73c4,0 0 0.2em #0d73c4;
+              border-width:0px;
+              border-style: solid;
+            }
+            .listMenu a{
+              color:#acacac;
+            }
+            .listMenu{
+              background-color:#f6f6f6;
+            }
+
+            .paquita{
+              margin-left:2px;
+            }
+
+        </style>
+        <script>
+          $(document).ready(function(){
+            $("*").css("text-shadow","none");
+
+            var panel='<div data-role="panel" data-display="overlay" class="panel" id="myPanel"><h1>Robotics</h1><h5>IES L\'ESTACIÓ LABS</<h5> \
+            <ul class="listMenu" data-role="listview" data-inset="true" class="tablist-left"> \
+            <li><a href="#pageInit" class="ui-btn ui-icon-home ui-btn-icon-left " data-ajax="false">Inici</a></li> \
+            <li><a href="#pageSetup" class="ui-btn ui-shadow ui-icon-gear ui-btn-icon-left" data-ajax="false">Setup Rogerbot</a></li> \
+            <li><a href="#pageSensors" class="ui-btn ui-shadow ui-icon-eye ui-btn-icon-left" data-ajax="false">Test Sensors</a></li> \
+            <li><a href="#pageSharp" class="ui-btn ui-shadow ui-icon-eye ui-btn-icon-left" data-ajax="false">Test Sharp GP2D12</a></li> \
+            <li><a href="#pageMotors" class="ui-btn ui-shadow ui-icon-recycle ui-btn-icon-left " data-ajax="false">Test Motors</a></li> \
+            <li><a href="#pageAlignment" class="ui-btn ui-shadow ui-icon-arrow-u-r ui-btn-icon-left" data-ajax="false">Test Alignment</a></li> \
+            <li><a href="#pageAbout" class="ui-btn ui-shadow ui-icon-info ui-btn-icon-left" data-ajax="false">About</a></li> \
+            </ul> \
+            <br><br><img src="img/logo_ies_small.png" /> ';
+
+            $(document).one('pagebeforecreate', function () {
+                  $.mobile.pageContainer.prepend(panel);
+                  //$("#menu").listview().enhanceWithin();
+                  $("#myPanel").panel().enhanceWithin();
+            });
+          });
+        </script>
+        <script src="js/libs/jquery.mobile-1.4.5.min.js"></script>
+	<script src="js/libs/stopwatch.js"></script>
+    </head>
+    <body style="background-color:#000;">
+
+      <div data-role="page" id="pageInit">
+
+
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>ITRobot</h1>
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <div id="connection">
+              <div style="margin: 20p0x">
+                  Dispositiu <img src="img/bt.png"/>:<br/>
+                  <select id="deviceList">
+                      <option>Descobrint...</option>
+                  </select>
+              </div>
+              <p>
+                <a class="ui-btn ui-shadow ui-icon-action ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="connectButton">Connectar</a>
+              </p>
+              <p>
+                  <a class="ui-btn" id="listButton">Llistar Dispositius</a>
+              </p>
+          </div>
+
+
+        </div>
+        <footer>
+            <div id="statusMessage"></div>
+            <img src="img/robot_rebird_pcb2.svg" alt="Rogerbot" style="display: block;width: 70%; height: auto; margin-left: auto;
+        margin-right: auto;">
+        </footer>
+
+      </div> <!-- END page one -->
+
+      <div data-role="page" id="pageSetup">
+
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Setup Rogerbot</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <div id="setup_div">
+            <div class="ui-grid-b">
+               <div class="ui-block-a"><a class="ui-btn  ui-shadow ui-icon-delete ui-btn-icon-left ui-corner-all" style="background:#d9534f;color:#fff;" id="stopButton">Stop</a></div>
+               <div class="ui-block-b"><a class="ui-btn ui-shadow ui-icon-arrow-r ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="startButton">Start</a></div>
+               <!--<a class="ui-btn ui-shadow ui-icon-action ui-btn-icon-left ui-corner-all" style="background:#5cb85c;color:#fff;" id="sendButton">Desar</a>-->
+               <div class="ui-block-c"><a class="ui-btn ui-shadow ui-icon-action ui-btn-icon-left ui-corner-all" style="background:#0099FF;color:#fff;" id="sendButton">Save</a></div>
+            </div>
+              <form id="setupform">
+                  <textarea id="messages" readonly></textarea>
+                  <!-- <input type="text" class="topcoat-text-input" id="message" placeholder="Message" /> -->
+                  <label for="velocitat">Velocitat:</label>
+                  <input type="range" name="velocitat" id="velocitat"  min="0" max="255" data-highlight="true" data-show-value="true">
+                  <label for="Kp">Kp:</label>
+                  <input type="range" name="Kp" id="Kp"  min="0" max="255" data-highlight="true" data-show-value="true">
+                  <label for="Kd">Kd:</label>
+                  <input type="range" name="Kd" id="Kd"  min="0" max="255" data-highlight="true" data-show-value="true">
+                  <label for="CorrectorCurva">Corrector curva:</label>
+                  <input type="range" name="CorrectorCurva" id="CorrectorCurva"  min="0" max="100" data-highlight="true" data-show-value="true">
+                  <!-- <div class="ui-grid-a">
+                        <div class="ui-block-a"> -->
+                        <div class = "ui-grid-a">
+                          <div data-role="fieldcontain" class="ui-block-a" >
+                             <label for="estrategy-select" class="select">Estrategia:</label>
+                             <select name="estrategy-select" id="estrategy-select">
+                                <option select="selected" value="a">Line Following (time interr 1ms)</option>
+                                <option value="b">Rescue pots negres</option>
+                                <option value="c">Rescue pots negres i blancs</option>
+                                <option value="d">Rescue pots negres i blancs(CEC)</option>
+                                <option value="e">2016</option>
+                             </select>
+                          </div>
+                          <div class="ui-block-b paquita">
+                              <label for="switch">&nbsp;Telemetria:
+                              <input type="checkbox" data-role="flipswitch" name="telemetria" id="telemetria"></label>
+                          </div>
+                        </div>
+                     <!--   </div>
+                        <div class="ui-block-b"> -->
+
+                        </div>
+                  <!-- </div> -->
+
+              </form>
+              <div class="center">
+                 <a class="ui-btn ui-shadow ui-corner-all" style="display:none;background:#d9534f;color:#fff;" id="disconnectButton">Desconnectar</a>
+              </div>
+          </div>
+        </div>
+      </div> <!-- END pageSetup -->
+
+      <div data-role="page" id="pageSensors">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Sensors</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <p id="sensorBanner">Ves posicionant manualment cadascun dels sensors del robot sobre la línia negra... </p>
+          <div class="image">
+            <img  id="img_sensor" src="img/robot-rebird-2-0-sensor.svg" alt="Rogerbot" style="display: block;width: 80%; height: auto; margin-left: auto;
+      margin-right: auto;">
+            <h1 id="sensor_display">0</h1>
+          </div>
+        </div>
+
+      </div> <!-- END pageSensors -->
+
+
+      <div data-role="page" id="pageMotors">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Motors</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2>Treballant ... </h2>
+        </div>
+
+      </div> <!-- END pageMotors -->
+
+      <div data-role="page" id="pageSharp">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Sharp GP2D12</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2 id="banner_sharp">Treballant ... </h2>
+        </div>
+
+      </div> <!-- END pageSharp -->
+
+      <div data-role="page" id="pageAlignment">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Test Aliniació</h1>
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2>Treballant ... </h2>
+        </div>
+      </div> <!-- END pageAlignment -->
+      <div data-role="page" id="pageAbout">
+        <div data-role="header" style="background: #da4336;color:#fff">
+          <div style="float:left;"><a href="#myPanel"><img src="img/hamburger_light.svg" style="margin-left:7px;vertical-align:middle"/></a></div><h1>Crèdits</h1>
+
+        </div>
+
+        <div data-role="main" class="ui-content">
+          <h2>Treballant ... </h2>
+        </div>
+      </div> <!-- END pageAbout -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
+</html>
