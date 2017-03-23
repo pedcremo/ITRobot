@@ -80,37 +80,42 @@ var app = {
             messages.value = "Rogerbot donam configuració ....";
             messages.scrollTop = messages.scrollHeight;
 
-            bluetoothSerial.readUntil('z', function (data) { //Funció traicionera retorna un string buit si no troba delimitador
+            bluetoothSerial.available(function (numBytes) {
+                //bluetoothSerial.readUntil('z', function (data) { //Funció traicionera retorna un string buit si no troba delimitador
+                bluetoothSerial.subscribe('z', function (data) { //Funció traicionera retorna un string buit si no troba delimitador
 
-              if (data.length<=9 && cont_<50) app.pageSetup(); //Si el string retornat es buit tornem a demanar
-              else cont_=0;
-              console.log("Read Rogerbot setup:"+data+" length="+data.length+"last char="+data[data.length-1])  ;
-              var databak=data.substring(data.lastIndexOf("o")+1,(data.length-1));//La informació esta delimitada entre els caracters "o" i "z"
-              //if (data[0]=='o'){databak=data.substr(data.indexOf("o")+1,(data.length-1)); }   //BUG
+                    if (data.length<=9 && cont_<50) {app.pageSetup();} //Si el string retornat es buit tornem a demanar
+                    else {cont_=0;}
+                    console.log("Read Rogerbot setup:"+data+" length="+data.length+"last char="+data[data.length-1])  ;
+                    var databak=data.substring(data.lastIndexOf("o")+1,(data.length-1));//La informació esta delimitada entre els caracters "o" i "z"
+                    //if (data[0]=='o'){databak=data.substr(data.indexOf("o")+1,(data.length-1)); }   //BUG
+                    bluetoothSerial.clear();
+                    var res= databak.split(",");
+                    //bluetoothSerial.unsubscribe();
+                    messages.value = " Velocitat="+parseInt(res[0])+" tel="+parseInt(res[1])+" Kp="+parseInt(res[2])+" Kd="+parseInt(res[3])+ " Estrategia="+res[4]+" curveC="+parseInt(res[5])+"%";
+                    $("#velocitat").val(parseInt(res[0])).slider("refresh");
+                    if (parseInt(res[1])==0){
+                        $("#telemetria").attr('checked',false).flipswitch("refresh");
+                    }else{
+                        $("#telemetria").attr('checked',true).flipswitch("refresh");
+                    }
+                    $('#estrategy-select').val(res[4]);
+                    //$("#estrategy-select").selectedIndex=res[4];
+                    $("#estrategy-select").selectmenu("refresh");
+                    $("#Kp").val(parseInt(res[2])).slider("refresh");
+                    $("#Kd").val(parseInt(res[3])).slider("refresh");
+                    $("#CorrectorCurva").val(parseInt(res[5])).slider("refresh");
+                    }, failure);
 
-              var res= databak.split(",");
-
-              messages.value = " Velocitat="+parseInt(res[0])+" tel="+parseInt(res[1])+" Kp="+parseInt(res[2])+" Kd="+parseInt(res[3])+ " Estrategia="+res[4]+" curveC="+parseInt(res[5])+"%";
-              $("#velocitat").val(parseInt(res[0])).slider("refresh");
-              if (parseInt(res[1])==0){
-                $("#telemetria").attr('checked',false).flipswitch("refresh");
-              }else{
-                $("#telemetria").attr('checked',true).flipswitch("refresh");
-              }
-              $('#estrategy-select').val(res[4]);
-              //$("#estrategy-select").selectedIndex=res[4];
-              $("#estrategy-select").selectmenu("refresh");
-              $("#Kp").val(parseInt(res[2])).slider("refresh");
-              $("#Kd").val(parseInt(res[3])).slider("refresh");
-              $("#CorrectorCurva").val(parseInt(res[5])).slider("refresh");
             }, failure);
-
         };
+
         var failure = function () {
             messages.value = "ERROR: Comunicació fallida";
             messages.scrollTop = messages.scrollHeight;
         };
-        bluetoothSerial.write(data_, setTimeout(success,1), failure);
+        //bluetoothSerial.write(data_,function(){ setTimeout(success,2);}, failure);
+        bluetoothSerial.write(data_,success, failure);
     },
 
     //Triggered when pageSensors is showed. Schedules a regular call to readSensor. This schedulling
@@ -140,6 +145,7 @@ var app = {
             if (valor==-9) $("#sensorBanner").html("El robot se n'ha eixit per la dreta. La línia negra queda a l'esquerra");
             else if (valor==9) $("#sensorBanner").html("El robot se n'ha eixit per l'esquerra. La línia negra queda a la dreta");
             else $("#sensorBanner").html("Ves posicionant manualment cadascun dels sensors del robot sobre la línia negra...");
+       
           }
           console.log("Read Rogerbot test sensor:"+data+" "+data.length);
         },failure);
@@ -200,9 +206,9 @@ var app = {
     },
 
     sendDataStart: function(event) {
-	     sw_show();
-	     sw_reset();
-	     sw_start();
+        sw_show();
+        sw_reset();
+        sw_start();
         event.preventDefault();
         var data = new Uint8Array([0x61,0x2E]); //Send sequence 'a.' to start Rogerbot race
         var success = function () {
@@ -218,7 +224,7 @@ var app = {
 
     },
     sendDataStop: function(event) {
-	     sw_stop();
+	    sw_stop();
         event.preventDefault();
         var data = new Uint8Array([0x7A,0x2E]); //Send sequence 'z.' to start Rogerbot race
         var success = function () {
